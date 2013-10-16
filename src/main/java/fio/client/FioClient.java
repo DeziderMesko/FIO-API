@@ -8,14 +8,14 @@ public class FioClient {
 	private String token = "";
 	private DataFormat dataFormat = DataFormat.XML;
 	private String url = HTTPS_WWW_FIO_CZ;
-	
+
 	public FioClient(String token, DataFormat dataFormat) {
 		this.token = token;
 		this.dataFormat = dataFormat;
 	}
-	
-	public FioClient(){
-		
+
+	public FioClient() {
+
 	}
 
 	public String getUrl() {
@@ -26,7 +26,6 @@ public class FioClient {
 		return dataFormat;
 	}
 
-	
 	public String getToken() {
 		return this.token;
 	}
@@ -41,10 +40,13 @@ public class FioClient {
 
 	public void setDataFormat(DataFormat dataFormat) {
 		this.dataFormat = dataFormat;
-		
+
 	}
-	
-	public FioResult getTransactions(Calendar from, Calendar to){
+
+	public FioResult getTransactions(Calendar from, Calendar to) throws InvalidParametersException {
+		if (from == null || to == null || from.after(to)) {
+			throw new InvalidParametersException();
+		}
 		return null;
 	}
 }

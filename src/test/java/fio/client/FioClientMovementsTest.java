@@ -1,7 +1,6 @@
 package fio.client;
 
 import java.util.Calendar;
-import java.util.Date;
 
 import org.testng.Assert;
 import org.testng.annotations.BeforeMethod;
@@ -22,7 +21,7 @@ public class FioClientMovementsTest {
 	}
 
 	@Test
-	public void getDateRangeTransactions() {
+	public void getDateRangeTransactions() throws InvalidParametersException {
 		FioResult fr = fc.getTransactions(from, to);
 		Assert.assertNotNull(fr);
 		fr = fc.getTransactions(from, from);
@@ -35,7 +34,7 @@ public class FioClientMovementsTest {
 	}
 
 	@Test(expectedExceptions = InvalidParametersException.class, dataProvider = "invalidDates")
-	public void getDateRangeTransactionsInvalid(Calendar date1, Calendar date2) {
+	public void getDateRangeTransactionsInvalid(Calendar date1, Calendar date2) throws InvalidParametersException {
 		FioResult fr = fc.getTransactions(date1, date2);
 	}
 
