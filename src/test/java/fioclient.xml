@@ -1,8 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <suite name="Suite" parallel="false">
   <test name="Test">
-    <classes>
-      <class name="fio.client.FioClientTest"/>
-    </classes>
+      <packages><package name = "fio.client.*"></package></packages>
   </test> <!-- Test -->
 </suite> <!-- Suite -->
