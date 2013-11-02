@@ -4,11 +4,11 @@ import java.net.URI;
 
 public class FioResult {
 
-	private URI requestUri;
+	private String requestUri;
 	private DataFormat dataFormat;
 	private String response;
 	
-	public FioResult(String response, DataFormat dataFormat, URI requestUri) {
+	public FioResult(String response, DataFormat dataFormat, String requestUri) {
 		this.response = response;
 		this.dataFormat = dataFormat;
 		this.requestUri = requestUri;
@@ -22,7 +22,7 @@ public class FioResult {
 		return this.dataFormat;
 	}
 
-	public URI getRequestURI() {
+	public String getRequestURI() {
 		return this.requestUri;
 	}
 

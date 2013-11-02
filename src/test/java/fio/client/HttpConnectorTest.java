@@ -1,6 +1,7 @@
 package fio.client;
 
 import java.io.IOException;
+import java.net.URL;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -8,9 +9,16 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.eclipse.jetty.server.Connector;
+import org.eclipse.jetty.server.HttpConfiguration;
+import org.eclipse.jetty.server.HttpConnectionFactory;
 import org.eclipse.jetty.server.Request;
+import org.eclipse.jetty.server.SecureRequestCustomizer;
 import org.eclipse.jetty.server.Server;
+import org.eclipse.jetty.server.ServerConnector;
+import org.eclipse.jetty.server.SslConnectionFactory;
 import org.eclipse.jetty.server.handler.AbstractHandler;
+import org.eclipse.jetty.util.ssl.SslContextFactory;
 import org.testng.Assert;
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
@@ -35,7 +43,27 @@ public class HttpConnectorTest {
 	@BeforeClass
 	public void beforeClass() throws Exception {
 
-		server = new Server(60000);
+		server = new Server(0);
+		
+        HttpConfiguration https_config = new HttpConfiguration();
+        https_config.setSecureScheme("https");
+        https_config.setSecurePort(8443);
+        https_config.setOutputBufferSize(32768);
+        https_config.addCustomizer(new SecureRequestCustomizer());
+        
+        SslContextFactory sslContextFactory = new SslContextFactory();
+        URL kstore = this.getClass().getResource("/keystore");
+        sslContextFactory.setKeyStorePath(kstore.getPath());
+        sslContextFactory.setKeyStorePassword("httptest");
+        
+        ServerConnector https = new ServerConnector(server,
+                new SslConnectionFactory(sslContextFactory,"http/1.1"),
+                new HttpConnectionFactory(https_config));
+            https.setPort(8443);
+            https.setIdleTimeout(500000);
+        
+        server.setConnectors(new Connector[] { https });
+        
 		server.setHandler(new AbstractHandler() {
 			@Override
 			public void handle(String target, Request baseRequest, HttpServletRequest request, HttpServletResponse response)

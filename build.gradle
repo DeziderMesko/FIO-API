@@ -16,6 +16,7 @@ repositories {
 dependencies {
     testCompile group: 'org.testng', name: 'testng', version: '6.8.+'
 	testCompile group: 'org.eclipse.jetty', name: 'jetty-webapp', version: '9.+'
+	testCompile group: 'org.mockito', name: 'mockito-all', version: '1.8.+'
 }
 
 test {

@@ -1,5 +1,5 @@
 package fio.client;
 
 public enum DataFormat {
-	XML, JSON
+	xml, json, ofx, gpc, csv, html, sta, pdf
 }
