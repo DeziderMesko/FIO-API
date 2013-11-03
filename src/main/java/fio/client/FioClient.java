@@ -1,14 +1,13 @@
 package fio.client;
 
-import java.net.URISyntaxException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 
 import fio.client.https.BasicHttpsConnector;
 import fio.client.https.HttpsConnector;
 import fio.client.https.HttpsRequestException;
-import fio.client.result.FioResultFormat;
 import fio.client.result.FioResult;
+import fio.client.result.FioResultFormat;
 
 public class FioClient {
 	private static final String HTTPS_WWW_FIO_CZ = "https://www.fio.cz/ib_api/rest/";
@@ -24,57 +23,55 @@ public class FioClient {
 	private static final String SET_LAST_BY_DATE = "%sset-last-date/%s/%s/";
 
 	private String token = "";
-	private FioResultFormat dataFormat = FioResultFormat.xml;
+	private FioResultFormat fioResultFormat = FioResultFormat.xml;
 	private String fioUrl = HTTPS_WWW_FIO_CZ;
 
 	SimpleDateFormat dateFormatter = new SimpleDateFormat("yyyy-MM-dd");
 	private HttpsConnector httpConnector;
 
-	public FioClient(String token, FioResultFormat dataFormat) {
+	public FioClient(String token, FioResultFormat fioResultFormat) {
 		this.token = token;
-		this.dataFormat = dataFormat;
+		this.fioResultFormat = fioResultFormat;
 		setHttpConnector(new BasicHttpsConnector());
 	}
 
-	public FioResult getTransactions(Calendar from, Calendar to) throws InvalidParametersException, URISyntaxException,
-			HttpsRequestException {
+	public FioResult getTransactions(Calendar from, Calendar to) throws InvalidParametersException, HttpsRequestException {
 		if (from == null || to == null || from.after(to)) {
 			throw new InvalidParametersException();
 		}
 
-		String uri = String.format(GET_TRANSACTIONS, fioUrl, getToken(), dateFormatter.format(from.getTime()),
+		String url = String.format(GET_TRANSACTIONS, fioUrl, getToken(), dateFormatter.format(from.getTime()),
 				dateFormatter.format(to.getTime()), getDataFormat().toString());
-		return executeRequest(uri);
+		return executeRequest(url);
 	}
 
 	public FioResult getNewTransactions() throws HttpsRequestException {
-		String uri = String.format(GET_NEW_TRANSACTIONS, fioUrl, getToken(), getDataFormat().toString());
-		return executeRequest(uri);
+		String url = String.format(GET_NEW_TRANSACTIONS, fioUrl, getToken(), getDataFormat().toString());
+		return executeRequest(url);
 	}
 
 	public FioResult getStatement(int year, int statementNumber) throws HttpsRequestException {
-		String uri = String.format(GET_STATEMENTS, fioUrl, getToken(), String.valueOf(year), String.valueOf(statementNumber),
+		String url = String.format(GET_STATEMENTS, fioUrl, getToken(), String.valueOf(year), String.valueOf(statementNumber),
 				getDataFormat().toString());
-		return executeRequest(uri);
+		return executeRequest(url);
 	}
 
 	public FioResult setTransactionPointerByDate(Calendar date) throws HttpsRequestException, InvalidParametersException {
 		if (date == null) {
 			throw new InvalidParametersException();
 		}
-		String uri = String.format(SET_LAST_BY_DATE, fioUrl, getToken(), dateFormatter.format(date.getTime()), getDataFormat()
-				.toString());
-		return executeRequest(uri);
+		String url = String.format(SET_LAST_BY_DATE, fioUrl, getToken(), dateFormatter.format(date.getTime()), getDataFormat().toString());
+		return executeRequest(url);
 	}
 
 	public FioResult setTransactionPointerById(int pointer) throws HttpsRequestException {
-		String uri = String.format(SET_LAST_BY_ID, fioUrl, getToken(), String.valueOf(pointer), getDataFormat().toString());
-		return executeRequest(uri);
+		String url = String.format(SET_LAST_BY_ID, fioUrl, getToken(), String.valueOf(pointer), getDataFormat().toString());
+		return executeRequest(url);
 	}
 
-	private FioResult executeRequest(String uri) throws HttpsRequestException {
-		String result = httpConnector.getData(uri);
-		return new FioResult(result, getDataFormat(), uri);
+	private FioResult executeRequest(String url) throws HttpsRequestException {
+		String result = httpConnector.getData(url);
+		return new FioResult(result, getDataFormat(), url);
 	}
 
 	public HttpsConnector getHttpConnector() {
@@ -94,11 +91,11 @@ public class FioClient {
 	}
 
 	public FioResultFormat getDataFormat() {
-		return dataFormat;
+		return fioResultFormat;
 	}
 
 	public void setDataFormat(FioResultFormat dataFormat) {
-		this.dataFormat = dataFormat;
+		this.fioResultFormat = dataFormat;
 
 	}
 

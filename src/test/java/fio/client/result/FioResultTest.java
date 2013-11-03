@@ -15,6 +15,6 @@ public class FioResultTest {
 	  FioResult fr = new FioResult("Payload", FioResultFormat.json, "http://fio.cz");
 	  Assert.assertNotNull(fr.getResponse());
 	  Assert.assertNotNull(fr.getDataFormat());
-	  Assert.assertNotNull(fr.getRequestURI());
+	  Assert.assertNotNull(fr.getRequestURL());
   }
 }
