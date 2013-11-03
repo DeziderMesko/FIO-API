@@ -1,4 +1,4 @@
-package fio.client;
+package fio.client.https;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -7,19 +7,20 @@ import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
 
-public class BasicHttpConnector implements HttpConnector {
+
+public class BasicHttpsConnector implements HttpsConnector {
 	
 	@Override
-	public String getData(String url) throws HttpRequestException {
+	public String getData(String url) throws HttpsRequestException {
 		try {
 			return getData(new URL(url));
 		} catch (MalformedURLException e) {
-			throw new HttpRequestException(e);
+			throw new HttpsRequestException(e);
 		}
 	}
 
 	@Override
-	public String getData(URL url) throws HttpRequestException {
+	public String getData(URL url) throws HttpsRequestException {
 		BufferedReader in = null;
 		String result = "";
 		try {
@@ -30,7 +31,7 @@ public class BasicHttpConnector implements HttpConnector {
 				result += inputLine;
 			}
 		} catch (Exception e) {
-			throw new HttpRequestException(e);
+			throw new HttpsRequestException(e);
 		} finally {
 			if (in != null) {
 				try {

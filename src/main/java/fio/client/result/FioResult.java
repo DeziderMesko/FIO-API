@@ -1,14 +1,15 @@
-package fio.client;
+package fio.client.result;
 
 import java.net.URI;
+
 
 public class FioResult {
 
 	private String requestUri;
-	private DataFormat dataFormat;
+	private FioResultFormat dataFormat;
 	private String response;
 	
-	public FioResult(String response, DataFormat dataFormat, String requestUri) {
+	public FioResult(String response, FioResultFormat dataFormat, String requestUri) {
 		this.response = response;
 		this.dataFormat = dataFormat;
 		this.requestUri = requestUri;
@@ -18,7 +19,7 @@ public class FioResult {
 		return this.response;
 	}
 
-	public DataFormat getDataFormat() {
+	public FioResultFormat getDataFormat() {
 		return this.dataFormat;
 	}
 

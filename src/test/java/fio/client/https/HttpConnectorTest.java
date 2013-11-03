@@ -1,4 +1,4 @@
-package fio.client;
+package fio.client.https;
 
 import java.io.IOException;
 import java.net.URL;
@@ -25,14 +25,17 @@ import org.testng.annotations.BeforeClass;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
 
+import fio.client.https.BasicHttpsConnector;
+import fio.client.https.HttpsRequestException;
+
 public class HttpConnectorTest {
-	@Test(dataProvider = "dp", expectedExceptions = HttpRequestException.class, groups = { "integration" })
-	public void getData(String address, String result) throws HttpRequestException {
-		BasicHttpConnector hc = new BasicHttpConnector();
+	@Test(dataProvider = "dp", expectedExceptions = HttpsRequestException.class, groups = { "integration" })
+	public void getData(String address, String result) throws HttpsRequestException {
+		BasicHttpsConnector hc = new BasicHttpsConnector();
 		String data = hc.getData(address);
 		if (result != null) {
 			Assert.assertEquals(data, result);
-			throw new HttpRequestException(null); // all ok
+			throw new HttpsRequestException(null); // all ok
 		}
 		Assert.fail("Exception expected");
 
