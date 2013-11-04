@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<suite name="Suite" parallel="false">
+	<test name="Test">
+		<groups>
+			<run>
+				<exclude name="Real" />
+			</run>
+		</groups>
+		<packages>
+			<package name="fio.client.*"></package>
+		</packages>
+	</test> <!-- Test -->
+</suite> <!-- Suite -->

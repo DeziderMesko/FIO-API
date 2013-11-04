@@ -13,10 +13,14 @@ import org.testng.annotations.Test;
 
 import fio.client.https.BasicHttpsConnector;
 import fio.client.https.HttpsRequestException;
-import fio.client.result.FioResultFormat;
 import fio.client.result.FioResult;
+import fio.client.result.FioResultFormat;
 
 public class FioClientApiFunctionsTest {
+	/**
+	 * 
+	 */
+	private static final String SOME_DATA = "Some data";
 	FioClient fc = new FioClient("1234567890ABCDEF", FioResultFormat.json);;
 	Calendar from;
 	Calendar to;
@@ -51,9 +55,10 @@ public class FioClientApiFunctionsTest {
 	public Object[][] dates() {
 		return new Object[][] { { to }, { null } };
 	}
-	
+
 	@Test(expectedExceptions = InvalidParametersException.class, dataProvider = "invalidDates")
-	public void getDateRangeTransactionsInvalid(Calendar date1, Calendar date2) throws InvalidParametersException, URISyntaxException, HttpsRequestException {
+	public void getDateRangeTransactionsInvalid(Calendar date1, Calendar date2) throws InvalidParametersException, URISyntaxException,
+			HttpsRequestException {
 		fc.getTransactions(date1, date2);
 	}
 
@@ -63,45 +68,44 @@ public class FioClientApiFunctionsTest {
 		Assert.assertNotNull(fr);
 		Mockito.verify(connector).getData(Mockito.matches(".*/periods/.+/[0-9-]+/[0-9-]+/transactions.json"));
 	}
-	
-	
+
 	@Test
-	public void getStatement() throws HttpsRequestException{
+	public void getStatement() throws HttpsRequestException {
 		int year = 2013;
 		int statementNumber = 1;
-		Mockito.when(connector.getData(Mockito.anyString())).thenReturn("Some data");
+		Mockito.when(connector.getData(Mockito.anyString())).thenReturn(SOME_DATA.getBytes());
 		FioResult fr = fc.getStatement(year, statementNumber);
 		Assert.assertNotNull(fr);
 		Mockito.verify(connector).getData(Mockito.matches(".*/by-id/.+/[0-9]{4}/[0-9]+/transactions.json"));
 	}
-	
+
 	@Test
-	public void getNewTransactions() throws HttpsRequestException{
-		Mockito.when(connector.getData(Mockito.anyString())).thenReturn("Some data");
+	public void getNewTransactions() throws HttpsRequestException {
+		Mockito.when(connector.getData(Mockito.anyString())).thenReturn(SOME_DATA.getBytes());
 		FioResult fr = fc.getNewTransactions();
 		Assert.assertNotNull(fr);
 		Mockito.verify(connector).getData(Mockito.matches(".*/last/.+/transactions.json"));
 	}
 
 	@Test
-	public void setTransactionPointerById() throws HttpsRequestException{
+	public void setTransactionPointerById() throws HttpsRequestException {
 		int pointer = 0;
-		Mockito.when(connector.getData(Mockito.anyString())).thenReturn("Some data");
+		Mockito.when(connector.getData(Mockito.anyString())).thenReturn(SOME_DATA.getBytes());
 		FioResult fr = fc.setTransactionPointerById(pointer);
 		Assert.assertNotNull(fr);
 		Mockito.verify(connector).getData(Mockito.matches(".*/set-last-id/.+/[0-9]+/"));
 	}
 
 	@Test(dataProvider = "dates")
-	public void setTransactionPointerByDate(Calendar date1) throws HttpsRequestException, InvalidParametersException{
+	public void setTransactionPointerByDate(Calendar date1) throws HttpsRequestException, InvalidParametersException {
 		Calendar date = date1;
-		Mockito.when(connector.getData(Mockito.anyString())).thenReturn("Some data");
+		Mockito.when(connector.getData(Mockito.anyString())).thenReturn(SOME_DATA.getBytes());
 		FioResult fr = null;
 		try {
 			fr = fc.setTransactionPointerByDate(date);
 			Assert.assertNotNull(fr);
 			Mockito.verify(connector).getData(Mockito.matches(".*/set-last-date/.+/[0-9-]+/"));
-		} catch (InvalidParametersException ipe){
+		} catch (InvalidParametersException ipe) {
 			Assert.assertNull(fr);
 			Assert.assertNull(date1);
 		}

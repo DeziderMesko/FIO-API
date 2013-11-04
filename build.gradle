@@ -1,11 +1,13 @@
 apply plugin: 'java'
 apply plugin: 'eclipse'
+apply plugin: 'jacoco'
 
 sourceCompatibility = 1.7
 version = '1.0'
+
 jar {
     manifest {
-        attributes 'Implementation-Title': 'FIO', 'Implementation-Version': version
+        attributes 'Implementation-Title': 'FIO-API', 'Implementation-Version': version
     }
 }
 
@@ -14,19 +16,26 @@ repositories {
 }
 
 dependencies {
-    testCompile group: 'org.testng', name: 'testng', version: '6.8.+'
-	testCompile group: 'org.eclipse.jetty', name: 'jetty-webapp', version: '9.+'
-	testCompile group: 'org.mockito', name: 'mockito-all', version: '1.8.+'
+    testCompile group: 'org.testng', name: 'testng', version: '6.8.7'
+	testCompile group: 'org.eclipse.jetty', name: 'jetty-webapp', version: '9.0.6.v20130930'
+	testCompile group: 'org.mockito', name: 'mockito-all', version: '1.9.5'
 }
 
 test {
-    systemProperties 'property': 'value'
+	useTestNG()
+	include '**/*'
+	exclude '**/*Real*'
 }
 
-uploadArchives {
-    repositories {
-       flatDir {
-           dirs 'repos'
-       }
-    }
+jacoco {
+	toolVersion = "0.6.2.201302030002"
+	reportsDir = file("$buildDir/jacoco")
+}
+
+jacocoTestReport {
+	reports {
+		xml.enabled false
+		csv.enabled false
+		html.destination "${buildDir}/jacocoHtml"
+	}
 }

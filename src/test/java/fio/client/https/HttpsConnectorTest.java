@@ -25,14 +25,11 @@ import org.testng.annotations.BeforeClass;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
 
-import fio.client.https.BasicHttpsConnector;
-import fio.client.https.HttpsRequestException;
-
-public class HttpConnectorTest {
-	@Test(dataProvider = "dp", expectedExceptions = HttpsRequestException.class, groups = { "integration" })
-	public void getData(String address, String result) throws HttpsRequestException {
+public class HttpsConnectorTest {
+	@Test(dataProvider = "dp", expectedExceptions = HttpsRequestException.class, groups = { "Jetty" })
+	public void getData(String address, byte[] result) throws HttpsRequestException {
 		BasicHttpsConnector hc = new BasicHttpsConnector();
-		String data = hc.getData(address);
+		byte[] data = hc.getData(address);
 		if (result != null) {
 			Assert.assertEquals(data, result);
 			throw new HttpsRequestException(null); // all ok
@@ -47,26 +44,25 @@ public class HttpConnectorTest {
 	public void beforeClass() throws Exception {
 
 		server = new Server(0);
-		
-        HttpConfiguration https_config = new HttpConfiguration();
-        https_config.setSecureScheme("https");
-        https_config.setSecurePort(8443);
-        https_config.setOutputBufferSize(32768);
-        https_config.addCustomizer(new SecureRequestCustomizer());
-        
-        SslContextFactory sslContextFactory = new SslContextFactory();
-        URL kstore = this.getClass().getResource("/keystore");
-        sslContextFactory.setKeyStorePath(kstore.getPath());
-        sslContextFactory.setKeyStorePassword("httptest");
-        
-        ServerConnector https = new ServerConnector(server,
-                new SslConnectionFactory(sslContextFactory,"http/1.1"),
-                new HttpConnectionFactory(https_config));
-            https.setPort(8443);
-            https.setIdleTimeout(500000);
-        
-        server.setConnectors(new Connector[] { https });
-        
+
+		HttpConfiguration https_config = new HttpConfiguration();
+		https_config.setSecureScheme("https");
+		https_config.setSecurePort(8443);
+		https_config.setOutputBufferSize(32768);
+		https_config.addCustomizer(new SecureRequestCustomizer());
+
+		SslContextFactory sslContextFactory = new SslContextFactory();
+		URL kstore = this.getClass().getResource("/keystore");
+		sslContextFactory.setKeyStorePath(kstore.getPath());
+		sslContextFactory.setKeyStorePassword("httptest");
+
+		ServerConnector https = new ServerConnector(server, new SslConnectionFactory(sslContextFactory, "http/1.1"),
+				new HttpConnectionFactory(https_config));
+		https.setPort(8443);
+		https.setIdleTimeout(500000);
+
+		server.setConnectors(new Connector[] { https });
+
 		server.setHandler(new AbstractHandler() {
 			@Override
 			public void handle(String target, Request baseRequest, HttpServletRequest request, HttpServletResponse response)
@@ -74,12 +70,12 @@ public class HttpConnectorTest {
 				response.setContentType("text/html;charset=utf-8");
 				response.setStatus(HttpServletResponse.SC_OK);
 				baseRequest.setHandled(true);
-		        Pattern pattern = Pattern.compile("(?<=ib_api/rest/)[a-z-]*");
-		        Matcher matcher = pattern.matcher(target);
-		        String function = "";
-		        if(matcher.matches()) {
-		            function = matcher.group(1);
-		        }
+				Pattern pattern = Pattern.compile("(?<=ib_api/rest/)[a-z-]*");
+				Matcher matcher = pattern.matcher(target);
+				String function = "";
+				if (matcher.matches()) {
+					function = matcher.group(1);
+				}
 				switch (function) {
 				case "periods":
 				case "by-id":
@@ -107,6 +103,7 @@ public class HttpConnectorTest {
 
 	@DataProvider
 	public Object[][] dp() {
-		return new Object[][] { new Object[] { "http://localhost:60000", "Connected!" }, new Object[] { "invalid address", null }, };
+		return new Object[][] { new Object[] { "https://localhost:8443", "Connected!".getBytes() },
+				new Object[] { "invalid address", null } };
 	}
 }

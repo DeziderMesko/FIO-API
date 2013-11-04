@@ -1,8 +1,10 @@
 package fio.client.result;
 
+import java.io.UnsupportedEncodingException;
+
 /**
- * Objekt obalujici odpoved serveru na dotaz. Obsahuje URL ze ktere byla data
- * ziskana, format ve kterem byla ziskana a samotna data
+ * Objekt reprezentujici odpoved serveru na dotaz. Obsahuje URL ze ktere byla
+ * data ziskana, format ve kterem byla ziskana a samotna data
  * 
  * @author dezider.mesko
  * 
@@ -11,7 +13,7 @@ public class FioResult {
 
 	private String requestUrl;
 	private FioResultFormat dataFormat;
-	private String response;
+	private byte[] response;
 
 	/**
 	 * 
@@ -22,7 +24,7 @@ public class FioResult {
 	 * @param requestUrl
 	 *            adresa ze ktere byla data ziskana
 	 */
-	public FioResult(String response, FioResultFormat dataFormat, String requestUrl) {
+	public FioResult(byte[] response, FioResultFormat dataFormat, String requestUrl) {
 		this.response = response;
 		this.dataFormat = dataFormat;
 		this.requestUrl = requestUrl;
@@ -32,8 +34,8 @@ public class FioResult {
 	 * 
 	 * @return data tak, jak byla zaslana serverem
 	 */
-	public String getResponse() {
-		return this.response;
+	public byte[] getResponse() {
+		return response;
 	}
 
 	/**
@@ -41,7 +43,7 @@ public class FioResult {
 	 * @return format dat {@link FioResultFormat}
 	 */
 	public FioResultFormat getDataFormat() {
-		return this.dataFormat;
+		return dataFormat;
 	}
 
 	/**
@@ -49,7 +51,19 @@ public class FioResult {
 	 * @return adresa ze ktere byla data ziskana
 	 */
 	public String getRequestURL() {
-		return this.requestUrl;
+		return requestUrl;
+	}
+
+	/**
+	 * @see fio.client.result.FioResult#getResponseAsText()
+	 */
+	public String getResponseAsText() {
+		try {
+			return new String(response, dataFormat.getEncoding());
+		} catch (UnsupportedEncodingException e) {
+			e.printStackTrace();
+			return null;
+		}
 	}
 
 }

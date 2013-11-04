@@ -70,7 +70,7 @@ public class FioClient {
 	}
 
 	private FioResult executeRequest(String url) throws HttpsRequestException {
-		String result = httpConnector.getData(url);
+		byte[] result = httpConnector.getData(url);
 		return new FioResult(result, getDataFormat(), url);
 	}
 

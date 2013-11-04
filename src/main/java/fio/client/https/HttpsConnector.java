@@ -19,7 +19,7 @@ public interface HttpsConnector {
 	 * @return ziskana data
 	 * @throws HttpsRequestException
 	 */
-	public String getData(String url) throws HttpsRequestException;
+	public byte[] getData(String url) throws HttpsRequestException;
 
 	/**
 	 * Ziska data z HTTPS serveru
@@ -29,5 +29,5 @@ public interface HttpsConnector {
 	 * @return ziskana data
 	 * @throws HttpsRequestException
 	 */
-	public String getData(URL url) throws HttpsRequestException;
+	public byte[] getData(URL url) throws HttpsRequestException;
 }

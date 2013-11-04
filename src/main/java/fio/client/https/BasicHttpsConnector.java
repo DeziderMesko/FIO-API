@@ -1,8 +1,8 @@
 package fio.client.https;
 
-import java.io.BufferedReader;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.io.InputStreamReader;
+import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
 
@@ -20,7 +20,7 @@ public class BasicHttpsConnector implements HttpsConnector {
 	 * @see fio.client.https.HttpsConnector#getData(java.lang.String)
 	 */
 	@Override
-	public String getData(String url) throws HttpsRequestException {
+	public byte[] getData(String url) throws HttpsRequestException {
 		try {
 			return getData(new URL(url));
 		} catch (MalformedURLException e) {
@@ -32,29 +32,28 @@ public class BasicHttpsConnector implements HttpsConnector {
 	 * @see fio.client.https.HttpsConnector#getData(java.net.URL)
 	 */
 	@Override
-	public String getData(URL url) throws HttpsRequestException {
-		BufferedReader in = null;
-		String result = "";
+	public byte[] getData(URL url) throws HttpsRequestException {
+		InputStream is = null;
+		ByteArrayOutputStream baos = new ByteArrayOutputStream();
 		try {
 			HttpsURLConnection connection = (HttpsURLConnection) url.openConnection();
-			in = new BufferedReader(new InputStreamReader(connection.getInputStream()));
-			String inputLine;
-			while ((inputLine = in.readLine()) != null) {
-				result += inputLine;
-				result += '\n';
+			is = connection.getInputStream();
+			byte value;
+			while ((value = (byte) is.read()) != -1) {
+				baos.write(value);
 			}
 		} catch (Exception e) {
 			throw new HttpsRequestException(e);
 		} finally {
-			if (in != null) {
+			if (is != null) {
 				try {
-					in.close();
+					is.close();
 				} catch (IOException e) {
 					// who cares?
 					e.printStackTrace();
 				}
 			}
 		}
-		return result;
+		return baos.toByteArray();
 	}
 }

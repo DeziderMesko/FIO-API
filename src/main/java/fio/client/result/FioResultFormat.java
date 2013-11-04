@@ -5,5 +5,50 @@ package fio.client.result;
  * ://www.fio.cz/docs/cz/API_Bankovnictvi.pdf} (verze 1.2.6)
  */
 public enum FioResultFormat {
-	xml, json, ofx, gpc, csv, html, sta, pdf
+	xml, json, ofx, gpc("Windows-1250"), csv, html, sta, pdf(true);
+
+	boolean binary = false;
+
+	String encoding = "UTF-8";
+
+	/**
+	 * Zakladni konstruktor ktery ma predvolenou hodnotu pro atribut
+	 * <code>binary</code> jako false a predvolenout hodnotu pro atribut
+	 * <code>encoding</code> jako UTF-8
+	 */
+	FioResultFormat() {
+	}
+
+	/**
+	 * Konstruktor umoznujici menit kodovani pro dany format
+	 * 
+	 * @param encoding
+	 */
+	FioResultFormat(String encoding) {
+		this.encoding = encoding;
+	}
+
+	/**
+	 * Konstruktor umoznujici volit mezi binarnim a textovym typem formatu
+	 * 
+	 * @param binary
+	 *            true jestlize format je binarni
+	 */
+	FioResultFormat(boolean binary) {
+		this.binary = binary;
+	}
+
+	/**
+	 * @return kodovani pro tento typ
+	 */
+	public String getEncoding() {
+		return encoding;
+	}
+
+	/**
+	 * @return true jestlize tento typ je binarni
+	 */
+	public Boolean isBinary() {
+		return binary;
+	}
 }
