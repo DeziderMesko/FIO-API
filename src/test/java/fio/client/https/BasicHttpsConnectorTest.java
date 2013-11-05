@@ -2,9 +2,14 @@ package fio.client.https;
 
 import java.io.IOException;
 import java.net.URL;
+import java.security.cert.X509Certificate;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import javax.net.ssl.SSLContext;
+import javax.net.ssl.SSLSocketFactory;
+import javax.net.ssl.TrustManager;
+import javax.net.ssl.X509TrustManager;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -25,19 +30,7 @@ import org.testng.annotations.BeforeClass;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
 
-public class HttpsConnectorTest {
-	@Test(dataProvider = "dp", expectedExceptions = HttpsRequestException.class, groups = { "Jetty" })
-	public void getData(String address, byte[] result) throws HttpsRequestException {
-		BasicHttpsConnector hc = new BasicHttpsConnector();
-		byte[] data = hc.getData(address);
-		if (result != null) {
-			Assert.assertEquals(data, result);
-			throw new HttpsRequestException(null); // all ok
-		}
-		Assert.fail("Exception expected");
-
-	}
-
+public class BasicHttpsConnectorTest {
 	Server server = null;
 
 	@BeforeClass
@@ -70,11 +63,11 @@ public class HttpsConnectorTest {
 				response.setContentType("text/html;charset=utf-8");
 				response.setStatus(HttpServletResponse.SC_OK);
 				baseRequest.setHandled(true);
-				Pattern pattern = Pattern.compile("(?<=ib_api/rest/)[a-z-]*");
-				Matcher matcher = pattern.matcher(target);
+				Pattern pattern = Pattern.compile("(/ib_api/rest/)([a-z-]*)(/.*)");
 				String function = "";
+				Matcher matcher = pattern.matcher(target);
 				if (matcher.matches()) {
-					function = matcher.group(1);
+					function = matcher.group(2);
 				}
 				switch (function) {
 				case "periods":
@@ -82,7 +75,7 @@ public class HttpsConnectorTest {
 				case "last":
 				case "set-last-id":
 				case "set-last-date":
-					response.getWriter().println("Connected!");
+					response.getWriter().print("Connected!");
 					break;
 				default:
 					response.setStatus(HttpServletResponse.SC_NOT_FOUND);
@@ -103,7 +96,53 @@ public class HttpsConnectorTest {
 
 	@DataProvider
 	public Object[][] dp() {
-		return new Object[][] { new Object[] { "https://localhost:8443", "Connected!".getBytes() },
-				new Object[] { "invalid address", null } };
+		return new Object[][] {
+				new Object[] { "https://localhost:8443/ib_api/rest/last/TOKEN/transactions.json", "Connected!".getBytes(), false },
+				new Object[] { "https://localhost:8443/INVALID/transactions.json", null, true },
+				new Object[] { "invalid address", null, true } };
+	}
+
+	@Test(dataProvider = "dp", groups = { "Jetty" })
+	public void getData(String address, byte[] result, boolean exceptionExpected) throws Exception {
+		BasicHttpsConnector hc = new BasicHttpsConnector();
+		hc.setDefaultSSLSocketFactory(getDefaultSSLSocketFactory());
+		try {
+			byte[] data = hc.getData(address);
+			if (result != null) {
+				Assert.assertEquals(data, result);
+			}
+		} catch (HttpsRequestException e) {
+			if (!exceptionExpected) {
+				Assert.fail("Exception not expected");
+			}
+		}
+	}
+
+	/**
+	 * Disable SSL cert checking as described on <br>
+	 * {@link http://www.nakov.com/blog/2009/07/16/
+	 * disable-certificate-validation-in-java-ssl-connections/}
+	 * 
+	 * @return
+	 */
+	private SSLSocketFactory getDefaultSSLSocketFactory() throws Exception {
+		// Create a trust manager that does not validate certificate chains
+		TrustManager[] trustAllCerts = new TrustManager[] { new X509TrustManager() {
+			public java.security.cert.X509Certificate[] getAcceptedIssuers() {
+				return null;
+			}
+
+			public void checkClientTrusted(X509Certificate[] certs, String authType) {
+			}
+
+			public void checkServerTrusted(X509Certificate[] certs, String authType) {
+			}
+		} };
+
+		// Install the all-trusting trust manager
+		SSLContext sc = SSLContext.getInstance("SSL");
+		sc.init(null, trustAllCerts, new java.security.SecureRandom());
+
+		return sc.getSocketFactory();
 	}
 }

@@ -7,6 +7,7 @@ import java.net.MalformedURLException;
 import java.net.URL;
 
 import javax.net.ssl.HttpsURLConnection;
+import javax.net.ssl.SSLSocketFactory;
 
 /**
  * Zakladni implementace {@link HttpsConnector}
@@ -15,6 +16,8 @@ import javax.net.ssl.HttpsURLConnection;
  * 
  */
 public class BasicHttpsConnector implements HttpsConnector {
+
+	private SSLSocketFactory defaultSSLSocketFactory;
 
 	/**
 	 * @see fio.client.https.HttpsConnector#getData(java.lang.String)
@@ -36,7 +39,11 @@ public class BasicHttpsConnector implements HttpsConnector {
 		InputStream is = null;
 		ByteArrayOutputStream baos = new ByteArrayOutputStream();
 		try {
+			if (defaultSSLSocketFactory != null) {
+				HttpsURLConnection.setDefaultSSLSocketFactory(defaultSSLSocketFactory);
+			}
 			HttpsURLConnection connection = (HttpsURLConnection) url.openConnection();
+
 			is = connection.getInputStream();
 			byte value;
 			while ((value = (byte) is.read()) != -1) {
@@ -55,5 +62,14 @@ public class BasicHttpsConnector implements HttpsConnector {
 			}
 		}
 		return baos.toByteArray();
+	}
+
+	/**
+	 * Tuto metodu je mozne pouzit pro vypnuti kontroly validity SSL certifikatu
+	 * 
+	 * @param defaultSSLSocketFactory
+	 */
+	protected void setDefaultSSLSocketFactory(SSLSocketFactory defaultSSLSocketFactory) {
+		this.defaultSSLSocketFactory = defaultSSLSocketFactory;
 	}
 }
