@@ -58,6 +58,9 @@ public class FioResult {
 	 * @see fio.client.result.FioResult#getResponseAsText()
 	 */
 	public String getResponseAsText() {
+		if (dataFormat.isBinary()) {
+			return null;
+		}
 		try {
 			return new String(response, dataFormat.getEncoding());
 		} catch (UnsupportedEncodingException e) {

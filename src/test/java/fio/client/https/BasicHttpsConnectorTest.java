@@ -77,6 +77,12 @@ public class BasicHttpsConnectorTest {
 				case "set-last-date":
 					response.getWriter().print("Connected!");
 					break;
+				case "invalid-date":
+					response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+					break;
+				case "invalid-token":
+					response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+					break;
 				default:
 					response.setStatus(HttpServletResponse.SC_NOT_FOUND);
 				}
@@ -98,7 +104,9 @@ public class BasicHttpsConnectorTest {
 	public Object[][] dp() {
 		return new Object[][] {
 				new Object[] { "https://localhost:8443/ib_api/rest/last/TOKEN/transactions.json", "Connected!".getBytes(), false },
-				new Object[] { "https://localhost:8443/INVALID/transactions.json", null, true },
+				new Object[] { "https://localhost:8443/ib_api/rest/invalid-token/transactions.json", null, true },
+				new Object[] { "https://localhost:8443/ib_api/rest/invalid-date/transactions.json", null, true },
+				new Object[] { "https://localhost:8443/ib_api/rest/invalid-function/transactions.json", null, true },
 				new Object[] { "invalid address", null, true } };
 	}
 
