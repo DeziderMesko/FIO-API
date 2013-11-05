@@ -2,6 +2,10 @@ apply plugin: 'java'
 apply plugin: 'eclipse'
 apply plugin: 'jacoco'
 
+tasks.withType(Compile) {
+	options.encoding = 'UTF-8'
+}
+
 sourceCompatibility = 1.7
 version = '1.0'
 
@@ -23,8 +27,9 @@ dependencies {
 
 test {
 	useTestNG()
-	include '**/*'
+	include '**/**'
 	exclude '**/*Real*'
+	
 }
 
 jacoco {
