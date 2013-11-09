@@ -1,6 +1,7 @@
 package fio.client.https;
 
 import java.net.URL;
+import java.util.HashMap;
 
 import fio.client.FioClient;
 
@@ -30,4 +31,28 @@ public interface HttpsConnector {
 	 * @throws HttpsRequestException
 	 */
 	public byte[] getData(URL url) throws HttpsRequestException;
+
+	/**
+	 * Ziska data z HTTPS serveru POST metodou
+	 * 
+	 * @param url
+	 *            adresa pro ziskani dat
+	 * @param parameters
+	 *            POST parameters
+	 * @return ziskana data
+	 * @throws HttpsRequestException
+	 */
+	public byte[] getPostData(URL url, HashMap<String, String> parameters) throws HttpsRequestException;
+
+	/**
+	 * Wrapper pro funkci {@link #getPostData(URL, HashMap)}
+	 * 
+	 * @param url
+	 *            adresa pro ziskani dat
+	 * @param parameters
+	 *            POST parameters
+	 * @return ziskana data
+	 * @throws HttpsRequestException
+	 */
+	public byte[] getPostData(String url, HashMap<String, String> parameters) throws HttpsRequestException;
 }

@@ -110,4 +110,11 @@ public class FioClientApiFunctionsTest {
 			Assert.assertNull(date1);
 		}
 	}
+
+	@Test
+	public void sendRequest() throws HttpsRequestException {
+		String order = "";
+		FioResult fr = fc.sendOrder(order, FioResultFormat.xml);
+		Assert.assertNotNull(fr);
+	}
 }

@@ -70,6 +70,13 @@ public class BasicHttpsConnectorTest {
 					function = matcher.group(2);
 				}
 				switch (function) {
+				case "import":
+					String type = baseRequest.getParameter("type");
+					String token = baseRequest.getParameter("token");
+					String file = baseRequest.getParameter("file");
+					String lng = baseRequest.getParameter("lng");
+					response.getWriter().print(String.format("Type: %s, Language: %lng\nToken: %s\nFile:\n%s", type, lng, token, file));
+					break;
 				case "periods":
 				case "by-id":
 				case "last":
@@ -101,7 +108,7 @@ public class BasicHttpsConnectorTest {
 	}
 
 	@DataProvider
-	public Object[][] dp() {
+	public Object[][] queries() {
 		return new Object[][] {
 				new Object[] { "https://localhost:8443/ib_api/rest/last/TOKEN/transactions.json", "Connected!".getBytes(), false },
 				new Object[] { "https://localhost:8443/ib_api/rest/invalid-token/transactions.json", null, true },
@@ -110,7 +117,7 @@ public class BasicHttpsConnectorTest {
 				new Object[] { "invalid address", null, true } };
 	}
 
-	@Test(dataProvider = "dp", groups = { "Jetty" })
+	@Test(dataProvider = "queries", groups = { "Jetty" })
 	public void getData(String address, byte[] result, boolean exceptionExpected) throws Exception {
 		BasicHttpsConnector hc = new BasicHttpsConnector();
 		hc.setDefaultSSLSocketFactory(getDefaultSSLSocketFactory());
@@ -118,6 +125,27 @@ public class BasicHttpsConnectorTest {
 			byte[] data = hc.getData(address);
 			if (result != null) {
 				Assert.assertEquals(data, result);
+			}
+		} catch (HttpsRequestException e) {
+			if (!exceptionExpected) {
+				Assert.fail("Exception not expected");
+			}
+		}
+	}
+
+	@DataProvider
+	public Object[][] orders() {
+		return new Object[][] { new Object[] { null, true } };
+	}
+
+	@Test(dataProvider = "orders", groups = { "Jetty" })
+	public void getPostData(byte[] expectedResult, boolean exceptionExpected) throws Exception {
+		BasicHttpsConnector hc = new BasicHttpsConnector();
+		hc.setDefaultSSLSocketFactory(getDefaultSSLSocketFactory());
+		try {
+			byte[] resultData = hc.getPostData("https://localhost:8443/ib_api/rest/import", null);
+			if (expectedResult != null) {
+				Assert.assertEquals(resultData, expectedResult);
 			}
 		} catch (HttpsRequestException e) {
 			if (!exceptionExpected) {

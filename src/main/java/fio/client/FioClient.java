@@ -21,6 +21,8 @@ public class FioClient {
 	private static final String SET_LAST_BY_ID = "%sset-last-id/%s/%s/";
 	// set-last-date/{token}/{rrrr-mm-dd}/
 	private static final String SET_LAST_BY_DATE = "%sset-last-date/%s/%s/";
+	// import/
+	private static final String SEND_ORDER = "import/";
 
 	private String token = "";
 	private FioResultFormat fioResultFormat = FioResultFormat.xml;
@@ -105,6 +107,15 @@ public class FioClient {
 
 	public void setToken(String token) {
 		this.token = token;
+	}
+
+	/**
+	 * @param order
+	 * @param format
+	 * @return
+	 */
+	public FioResult sendOrder(String order, FioResultFormat format) {
+		return new FioResult(null, FioResultFormat.xml, SEND_ORDER);
 	}
 
 }

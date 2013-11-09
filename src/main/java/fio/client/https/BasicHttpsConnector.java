@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.HashMap;
 
 import javax.net.ssl.HttpsURLConnection;
 import javax.net.ssl.SSLSocketFactory;
@@ -71,5 +72,23 @@ public class BasicHttpsConnector implements HttpsConnector {
 	 */
 	protected void setDefaultSSLSocketFactory(SSLSocketFactory defaultSSLSocketFactory) {
 		this.defaultSSLSocketFactory = defaultSSLSocketFactory;
+	}
+
+	/**
+	 * @see fio.client.https.HttpsConnector#getPostData(java.net.URL,
+	 *      java.util.HashMap)
+	 */
+	@Override
+	public byte[] getPostData(URL url, HashMap<String, String> parameters) throws HttpsRequestException {
+		return null;
+	}
+
+	/**
+	 * @see fio.client.https.HttpsConnector#getPostData(java.lang.String,
+	 *      java.util.HashMap)
+	 */
+	@Override
+	public byte[] getPostData(String url, HashMap<String, String> parameters) throws HttpsRequestException {
+		return null;
 	}
 }
