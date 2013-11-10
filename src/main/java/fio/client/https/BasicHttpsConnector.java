@@ -89,6 +89,15 @@ public class BasicHttpsConnector implements HttpsConnector {
 	 */
 	@Override
 	public byte[] getPostData(String url, HashMap<String, String> parameters) throws HttpsRequestException {
+		try {
+			MultipartUtility mu = new MultipartUtility(url, "UTF-8");
+			// mu.addFilePart("file", uploadFile);
+
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
 		return null;
 	}
 }

@@ -3,6 +3,7 @@ package fio.client.https;
 import java.io.IOException;
 import java.net.URL;
 import java.security.cert.X509Certificate;
+import java.util.HashMap;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -75,7 +76,8 @@ public class BasicHttpsConnectorTest {
 					String token = baseRequest.getParameter("token");
 					String file = baseRequest.getParameter("file");
 					String lng = baseRequest.getParameter("lng");
-					response.getWriter().print(String.format("Type: %s, Language: %lng\nToken: %s\nFile:\n%s", type, lng, token, file));
+					// response.getWriter().print(String.format("Type: %s, Language: %lng\nToken: %s\nFile:\n%s",
+					// type, lng, token, file));
 					break;
 				case "periods":
 				case "by-id":
@@ -135,15 +137,16 @@ public class BasicHttpsConnectorTest {
 
 	@DataProvider
 	public Object[][] orders() {
-		return new Object[][] { new Object[] { null, true } };
+		;
+		return new Object[][] { new Object[] { args2map("type", "", "toke", "", "lng", "", "file", ""), null, true } };
 	}
 
 	@Test(dataProvider = "orders", groups = { "Jetty" })
-	public void getPostData(byte[] expectedResult, boolean exceptionExpected) throws Exception {
+	public void getPostData(HashMap<String, String> postParams, byte[] expectedResult, boolean exceptionExpected) throws Exception {
 		BasicHttpsConnector hc = new BasicHttpsConnector();
 		hc.setDefaultSSLSocketFactory(getDefaultSSLSocketFactory());
 		try {
-			byte[] resultData = hc.getPostData("https://localhost:8443/ib_api/rest/import", null);
+			byte[] resultData = hc.getPostData("https://localhost:8443/ib_api/rest/import", postParams);
 			if (expectedResult != null) {
 				Assert.assertEquals(resultData, expectedResult);
 			}
@@ -180,5 +183,16 @@ public class BasicHttpsConnectorTest {
 		sc.init(null, trustAllCerts, new java.security.SecureRandom());
 
 		return sc.getSocketFactory();
+	}
+
+	private HashMap<String, String> args2map(String... args) {
+		if (args.length % 2 != 0) {
+			throw new RuntimeException("Wrong configuration");
+		}
+		HashMap<String, String> hm = new HashMap<String, String>();
+		for (int i = 0; i + 1 < args.length; i++) {
+			hm.put(args[i], args[i + 1]);
+		}
+		return hm;
 	}
 }

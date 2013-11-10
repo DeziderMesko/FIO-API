@@ -1,8 +1,6 @@
 package fio.client.https;
 
 import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
@@ -10,7 +8,6 @@ import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
 import java.net.HttpURLConnection;
 import java.net.URL;
-import java.net.URLConnection;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -49,8 +46,6 @@ public class MultipartUtility {
 		httpConn.setDoOutput(true); // indicates POST method
 		httpConn.setDoInput(true);
 		httpConn.setRequestProperty("Content-Type", "multipart/form-data; boundary=" + boundary);
-		httpConn.setRequestProperty("User-Agent", "CodeJava Agent");
-		httpConn.setRequestProperty("Test", "Bonjour");
 		outputStream = httpConn.getOutputStream();
 		writer = new PrintWriter(new OutputStreamWriter(outputStream, charset), true);
 	}
@@ -81,24 +76,15 @@ public class MultipartUtility {
 	 *            a File to be uploaded
 	 * @throws IOException
 	 */
-	public void addFilePart(String fieldName, File uploadFile) throws IOException {
-		String fileName = uploadFile.getName();
+	public void addFilePart(String fieldName, String fileName, String content) throws IOException {
 		writer.append("--" + boundary).append(LINE_FEED);
 		writer.append("Content-Disposition: form-data; name=\"" + fieldName + "\"; filename=\"" + fileName + "\"").append(LINE_FEED);
-		writer.append("Content-Type: " + URLConnection.guessContentTypeFromName(fileName)).append(LINE_FEED);
+		writer.append("Content-Type: text/xml").append(LINE_FEED);
 		writer.append("Content-Transfer-Encoding: binary").append(LINE_FEED);
 		writer.append(LINE_FEED);
 		writer.flush();
-
-		FileInputStream inputStream = new FileInputStream(uploadFile);
-		byte[] buffer = new byte[4096];
-		int bytesRead = -1;
-		while ((bytesRead = inputStream.read(buffer)) != -1) {
-			outputStream.write(buffer, 0, bytesRead);
-		}
+		outputStream.write(content.getBytes("UTF-8"));
 		outputStream.flush();
-		inputStream.close();
-
 		writer.append(LINE_FEED);
 		writer.flush();
 	}
