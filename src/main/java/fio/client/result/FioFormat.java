@@ -4,7 +4,7 @@ package fio.client.result;
  * Mozne formaty vraceny serverm FIO tak jak jsou definovany v {@link http
  * ://www.fio.cz/docs/cz/API_Bankovnictvi.pdf} (verze 1.2.6)
  */
-public enum FioResultFormat {
+public enum FioFormat {
 	xml, json, ofx, gpc("Windows-1250"), csv, html, sta, pdf(true);
 
 	boolean binary = false;
@@ -16,7 +16,7 @@ public enum FioResultFormat {
 	 * <code>binary</code> jako false a predvolenout hodnotu pro atribut
 	 * <code>encoding</code> jako UTF-8
 	 */
-	FioResultFormat() {
+	FioFormat() {
 	}
 
 	/**
@@ -24,7 +24,7 @@ public enum FioResultFormat {
 	 * 
 	 * @param encoding
 	 */
-	FioResultFormat(String encoding) {
+	FioFormat(String encoding) {
 		this.encoding = encoding;
 	}
 
@@ -34,7 +34,7 @@ public enum FioResultFormat {
 	 * @param binary
 	 *            true jestlize format je binarni
 	 */
-	FioResultFormat(boolean binary) {
+	FioFormat(boolean binary) {
 		this.binary = binary;
 	}
 

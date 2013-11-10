@@ -7,7 +7,7 @@ import fio.client.https.BasicHttpsConnector;
 import fio.client.https.HttpsConnector;
 import fio.client.https.HttpsRequestException;
 import fio.client.result.FioResult;
-import fio.client.result.FioResultFormat;
+import fio.client.result.FioFormat;
 
 public class FioClient {
 	private static final String HTTPS_WWW_FIO_CZ = "https://www.fio.cz/ib_api/rest/";
@@ -25,13 +25,13 @@ public class FioClient {
 	private static final String SEND_ORDER = "import/";
 
 	private String token = "";
-	private FioResultFormat fioResultFormat = FioResultFormat.xml;
+	private FioFormat fioResultFormat = FioFormat.xml;
 	private String fioUrl = HTTPS_WWW_FIO_CZ;
 
 	SimpleDateFormat dateFormatter = new SimpleDateFormat("yyyy-MM-dd");
 	private HttpsConnector httpConnector;
 
-	public FioClient(String token, FioResultFormat fioResultFormat) {
+	public FioClient(String token, FioFormat fioResultFormat) {
 		this.token = token;
 		this.fioResultFormat = fioResultFormat;
 		setHttpConnector(new BasicHttpsConnector());
@@ -92,11 +92,11 @@ public class FioClient {
 		this.fioUrl = url;
 	}
 
-	public FioResultFormat getDataFormat() {
+	public FioFormat getDataFormat() {
 		return fioResultFormat;
 	}
 
-	public void setDataFormat(FioResultFormat dataFormat) {
+	public void setDataFormat(FioFormat dataFormat) {
 		this.fioResultFormat = dataFormat;
 
 	}
@@ -114,8 +114,8 @@ public class FioClient {
 	 * @param format
 	 * @return
 	 */
-	public FioResult sendOrder(String order, FioResultFormat format) {
-		return new FioResult(null, FioResultFormat.xml, SEND_ORDER);
+	public FioResult sendOrder(String order, FioFormat format) {
+		return new FioResult(null, FioFormat.xml, SEND_ORDER);
 	}
 
 }

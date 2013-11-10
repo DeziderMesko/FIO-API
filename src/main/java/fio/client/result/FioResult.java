@@ -12,7 +12,7 @@ import java.io.UnsupportedEncodingException;
 public class FioResult {
 
 	private String requestUrl;
-	private FioResultFormat dataFormat;
+	private FioFormat dataFormat;
 	private byte[] response;
 
 	/**
@@ -20,11 +20,11 @@ public class FioResult {
 	 * @param response
 	 *            data tak, jak byla zaslana serverem
 	 * @param dataFormat
-	 *            format dat {@link FioResultFormat}
+	 *            format dat {@link FioFormat}
 	 * @param requestUrl
 	 *            adresa ze ktere byla data ziskana
 	 */
-	public FioResult(byte[] response, FioResultFormat dataFormat, String requestUrl) {
+	public FioResult(byte[] response, FioFormat dataFormat, String requestUrl) {
 		this.response = response;
 		this.dataFormat = dataFormat;
 		this.requestUrl = requestUrl;
@@ -40,9 +40,9 @@ public class FioResult {
 
 	/**
 	 * 
-	 * @return format dat {@link FioResultFormat}
+	 * @return format dat {@link FioFormat}
 	 */
-	public FioResultFormat getDataFormat() {
+	public FioFormat getDataFormat() {
 		return dataFormat;
 	}
 

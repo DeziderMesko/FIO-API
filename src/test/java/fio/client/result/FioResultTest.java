@@ -13,7 +13,7 @@ public class FioResultTest {
 
 	@Test
 	public void initalizationTest() throws URISyntaxException {
-		FioResult fr = new FioResult("Payload".getBytes(), FioResultFormat.json, HTTPS_FIO_CZ);
+		FioResult fr = new FioResult("Payload".getBytes(), FioFormat.json, HTTPS_FIO_CZ);
 		Assert.assertNotNull(fr.getResponse());
 		Assert.assertNotNull(fr.getDataFormat());
 		Assert.assertNotNull(fr.getRequestURL());
@@ -21,25 +21,25 @@ public class FioResultTest {
 
 	@DataProvider(name = "encoding")
 	public Object[][] dp() throws UnsupportedEncodingException {
-		return new Object[][] { new Object[] { DARK_STRING.getBytes("Windows-1250"), FioResultFormat.json, false, "JSON + WIN1250" },
-				new Object[] { DARK_STRING.getBytes("Windows-1250"), FioResultFormat.gpc, true, "GPC + WIN1250" },
-				new Object[] { DARK_STRING.getBytes("UTF-8"), FioResultFormat.json, true, "JSON + UTF8" },
-				new Object[] { DARK_STRING.getBytes("UTF-8"), FioResultFormat.gpc, false, "GPC + UTF8" } };
+		return new Object[][] { new Object[] { DARK_STRING.getBytes("Windows-1250"), FioFormat.json, false, "JSON + WIN1250" },
+				new Object[] { DARK_STRING.getBytes("Windows-1250"), FioFormat.gpc, true, "GPC + WIN1250" },
+				new Object[] { DARK_STRING.getBytes("UTF-8"), FioFormat.json, true, "JSON + UTF8" },
+				new Object[] { DARK_STRING.getBytes("UTF-8"), FioFormat.gpc, false, "GPC + UTF8" } };
 	}
 
 	@Test(dataProvider = "encoding")
-	public void encodingTest(byte[] payload, FioResultFormat format, boolean isOk, String msg) {
+	public void encodingTest(byte[] payload, FioFormat format, boolean isOk, String msg) {
 		FioResult fr = new FioResult(payload, format, HTTPS_FIO_CZ);
 		Assert.assertEquals(fr.getResponseAsText().equals(DARK_STRING), isOk, msg);
 	}
 
 	@Test
 	public void testBinary() throws UnsupportedEncodingException {
-		FioResult fr = new FioResult(DARK_STRING.getBytes(), FioResultFormat.pdf, HTTPS_FIO_CZ);
+		FioResult fr = new FioResult(DARK_STRING.getBytes(), FioFormat.pdf, HTTPS_FIO_CZ);
 		Assert.assertNull(fr.getResponseAsText());
 		Assert.assertEquals(fr.getResponse(), DARK_STRING.getBytes());
 
-		fr = new FioResult(DARK_STRING.getBytes("UTF-8"), FioResultFormat.xml, HTTPS_FIO_CZ);
+		fr = new FioResult(DARK_STRING.getBytes("UTF-8"), FioFormat.xml, HTTPS_FIO_CZ);
 		Assert.assertEquals(fr.getResponseAsText(), DARK_STRING);
 		Assert.assertEquals(fr.getResponse(), DARK_STRING.getBytes("UTF-8"));
 
