@@ -1,5 +1,5 @@
 FIO-API (CZ)
-=======
+------------
 
 Java API k REST rozhrani FIO Banky tak jak je popsano na webu www.fio.cz
 
@@ -10,7 +10,7 @@ Rozhrani by melo byt:
 - schopne synchroniho a asynchronniho pouziti
 
 FIO-API (EN)
-=======
+------------
 
 Java API for FIO Bank REST interface as you can find on www.fio.cz
 
