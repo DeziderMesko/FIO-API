@@ -2,12 +2,12 @@ package fio.client;
 
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import java.util.HashMap;
 
 import fio.client.https.BasicHttpsConnector;
 import fio.client.https.HttpsConnector;
 import fio.client.https.HttpsRequestException;
 import fio.client.result.FioResult;
-import fio.client.result.FioFormat;
 
 public class FioClient {
 	private static final String HTTPS_WWW_FIO_CZ = "https://www.fio.cz/ib_api/rest/";
@@ -25,15 +25,15 @@ public class FioClient {
 	private static final String SEND_ORDER = "import/";
 
 	private String token = "";
-	private FioFormat fioResultFormat = FioFormat.xml;
+	private FioConstants.AnswerFormat answerFormat = FioConstants.AnswerFormat.xml;
 	private String fioUrl = HTTPS_WWW_FIO_CZ;
 
 	SimpleDateFormat dateFormatter = new SimpleDateFormat("yyyy-MM-dd");
 	private HttpsConnector httpConnector;
 
-	public FioClient(String token, FioFormat fioResultFormat) {
+	public FioClient(String token, FioConstants.AnswerFormat answerFormat) {
 		this.token = token;
-		this.fioResultFormat = fioResultFormat;
+		this.answerFormat = answerFormat;
 		setHttpConnector(new BasicHttpsConnector());
 	}
 
@@ -43,18 +43,18 @@ public class FioClient {
 		}
 
 		String url = String.format(GET_TRANSACTIONS, fioUrl, getToken(), dateFormatter.format(from.getTime()),
-				dateFormatter.format(to.getTime()), getDataFormat().toString());
+				dateFormatter.format(to.getTime()), getAnswerFormat().toString());
 		return executeRequest(url);
 	}
 
 	public FioResult getNewTransactions() throws HttpsRequestException {
-		String url = String.format(GET_NEW_TRANSACTIONS, fioUrl, getToken(), getDataFormat().toString());
+		String url = String.format(GET_NEW_TRANSACTIONS, fioUrl, getToken(), getAnswerFormat().toString());
 		return executeRequest(url);
 	}
 
 	public FioResult getStatement(int year, int statementNumber) throws HttpsRequestException {
 		String url = String.format(GET_STATEMENTS, fioUrl, getToken(), String.valueOf(year), String.valueOf(statementNumber),
-				getDataFormat().toString());
+				getAnswerFormat().toString());
 		return executeRequest(url);
 	}
 
@@ -62,18 +62,19 @@ public class FioClient {
 		if (date == null) {
 			throw new InvalidParametersException();
 		}
-		String url = String.format(SET_LAST_BY_DATE, fioUrl, getToken(), dateFormatter.format(date.getTime()), getDataFormat().toString());
+		String url = String
+				.format(SET_LAST_BY_DATE, fioUrl, getToken(), dateFormatter.format(date.getTime()), getAnswerFormat().toString());
 		return executeRequest(url);
 	}
 
 	public FioResult setTransactionPointerById(int pointer) throws HttpsRequestException {
-		String url = String.format(SET_LAST_BY_ID, fioUrl, getToken(), String.valueOf(pointer), getDataFormat().toString());
+		String url = String.format(SET_LAST_BY_ID, fioUrl, getToken(), String.valueOf(pointer), getAnswerFormat().toString());
 		return executeRequest(url);
 	}
 
 	private FioResult executeRequest(String url) throws HttpsRequestException {
 		byte[] result = httpConnector.getData(url);
-		return new FioResult(result, getDataFormat(), url);
+		return new FioResult(result, getAnswerFormat(), url);
 	}
 
 	public HttpsConnector getHttpConnector() {
@@ -92,12 +93,12 @@ public class FioClient {
 		this.fioUrl = url;
 	}
 
-	public FioFormat getDataFormat() {
-		return fioResultFormat;
+	public FioConstants.AnswerFormat getAnswerFormat() {
+		return answerFormat;
 	}
 
-	public void setDataFormat(FioFormat dataFormat) {
-		this.fioResultFormat = dataFormat;
+	public void setAnswerFormat(FioConstants.AnswerFormat dataFormat) {
+		this.answerFormat = dataFormat;
 
 	}
 
@@ -113,9 +114,18 @@ public class FioClient {
 	 * @param order
 	 * @param format
 	 * @return
+	 * @throws HttpsRequestException
 	 */
-	public FioResult sendOrder(String order, FioFormat format) {
-		return new FioResult(null, FioFormat.xml, SEND_ORDER);
+	public FioResult sendOrder(String order, FioConstants.AnswerFormat format) throws HttpsRequestException {
+		HashMap<String, String> parameters = new HashMap<String, String>();
+		parameters.put("lng", "cs");
+		parameters.put("token", token);
+		parameters.put("type", format.name());
+		parameters.put("file", order);
+		parameters.put("filename", "SomeName");
+
+		byte[] response = httpConnector.getPostData(SEND_ORDER, parameters);
+		return new FioResult(response, FioConstants.AnswerFormat.xml, SEND_ORDER);
 	}
 
 }

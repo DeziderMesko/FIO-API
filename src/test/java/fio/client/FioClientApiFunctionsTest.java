@@ -14,14 +14,13 @@ import org.testng.annotations.Test;
 import fio.client.https.BasicHttpsConnector;
 import fio.client.https.HttpsRequestException;
 import fio.client.result.FioResult;
-import fio.client.result.FioFormat;
 
 public class FioClientApiFunctionsTest {
 	/**
 	 * 
 	 */
 	private static final String SOME_DATA = "Some data";
-	FioClient fc = new FioClient("1234567890ABCDEF", FioFormat.json);;
+	FioClient fc = new FioClient("1234567890ABCDEF", FioConstants.AnswerFormat.json);;
 	Calendar from;
 	Calendar to;
 
@@ -114,7 +113,7 @@ public class FioClientApiFunctionsTest {
 	@Test
 	public void sendRequest() throws HttpsRequestException {
 		String order = "";
-		FioResult fr = fc.sendOrder(order, FioFormat.xml);
+		FioResult fr = fc.sendOrder(order, FioConstants.AnswerFormat.xml);
 		Assert.assertNotNull(fr);
 	}
 }

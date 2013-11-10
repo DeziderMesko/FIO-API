@@ -2,6 +2,8 @@ package fio.client.result;
 
 import java.io.UnsupportedEncodingException;
 
+import fio.client.FioConstants;
+
 /**
  * Objekt reprezentujici odpoved serveru na dotaz. Obsahuje URL ze ktere byla
  * data ziskana, format ve kterem byla ziskana a samotna data
@@ -12,21 +14,21 @@ import java.io.UnsupportedEncodingException;
 public class FioResult {
 
 	private String requestUrl;
-	private FioFormat dataFormat;
+	private FioConstants.AnswerFormat answerFormat;
 	private byte[] response;
 
 	/**
 	 * 
 	 * @param response
 	 *            data tak, jak byla zaslana serverem
-	 * @param dataFormat
-	 *            format dat {@link FioFormat}
+	 * @param answerFormat
+	 *            format dat {@link AnswerFormat}
 	 * @param requestUrl
 	 *            adresa ze ktere byla data ziskana
 	 */
-	public FioResult(byte[] response, FioFormat dataFormat, String requestUrl) {
+	public FioResult(byte[] response, FioConstants.AnswerFormat answerFormat, String requestUrl) {
 		this.response = response;
-		this.dataFormat = dataFormat;
+		this.answerFormat = answerFormat;
 		this.requestUrl = requestUrl;
 	}
 
@@ -40,10 +42,10 @@ public class FioResult {
 
 	/**
 	 * 
-	 * @return format dat {@link FioFormat}
+	 * @return format dat {@link AnswerFormat}
 	 */
-	public FioFormat getDataFormat() {
-		return dataFormat;
+	public FioConstants.AnswerFormat getDataFormat() {
+		return answerFormat;
 	}
 
 	/**
@@ -58,11 +60,11 @@ public class FioResult {
 	 * @see fio.client.result.FioResult#getResponseAsText()
 	 */
 	public String getResponseAsText() {
-		if (dataFormat.isBinary()) {
+		if (answerFormat.isBinary()) {
 			return null;
 		}
 		try {
-			return new String(response, dataFormat.getEncoding());
+			return new String(response, answerFormat.getEncoding());
 		} catch (UnsupportedEncodingException e) {
 			e.printStackTrace();
 			return null;

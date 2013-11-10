@@ -6,14 +6,13 @@ import org.testng.annotations.Test;
 
 import fio.client.https.HttpsRequestException;
 import fio.client.result.FioResult;
-import fio.client.result.FioFormat;
 
 public class FioClientRealServerTest {
 
 	@Test(groups = { "Real" })
 	public void getDateRangeTransactions() throws InvalidParametersException, HttpsRequestException {
 		String token = System.getenv("TOKEN");
-		FioClient fc = new FioClient(token, FioFormat.json);
+		FioClient fc = new FioClient(token, FioConstants.AnswerFormat.json);
 		Calendar from = Calendar.getInstance();
 		from.set(2013, 6, 15);
 		Calendar to = Calendar.getInstance();
