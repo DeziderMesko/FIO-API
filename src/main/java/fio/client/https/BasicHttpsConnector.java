@@ -5,7 +5,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.HashMap;
+import java.util.Map;
 
 import javax.net.ssl.HttpsURLConnection;
 import javax.net.ssl.SSLSocketFactory;
@@ -79,8 +79,12 @@ public class BasicHttpsConnector implements HttpsConnector {
 	 *      java.util.HashMap)
 	 */
 	@Override
-	public byte[] getPostData(URL url, HashMap<String, String> parameters) throws HttpsRequestException {
-		return null;
+	public byte[] getPostData(String url, Map<String, String> map) throws HttpsRequestException {
+		try {
+			return getPostData(new URL(url), map);
+		} catch (MalformedURLException e) {
+			throw new HttpsRequestException(e);
+		}
 	}
 
 	/**
@@ -88,16 +92,7 @@ public class BasicHttpsConnector implements HttpsConnector {
 	 *      java.util.HashMap)
 	 */
 	@Override
-	public byte[] getPostData(String url, HashMap<String, String> parameters) throws HttpsRequestException {
-		try {
-			MultipartUtility mu = new MultipartUtility(url, "UTF-8");
-			// mu.addFilePart("file", uploadFile);
-
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-
+	public byte[] getPostData(URL url, Map<String, String> parameters) throws HttpsRequestException {
 		return null;
 	}
 }

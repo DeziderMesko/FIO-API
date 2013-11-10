@@ -4,15 +4,15 @@
 package fio.client;
 
 /**
- * Trida obsahujici konstanty pouzite napric FIO API
+ * Trida obsahujici konstanty pouzite napric FIO API Tak jak jsou definovany v
+ * {@link http://www.fio.cz/docs/cz/API_Bankovnictvi.pdf} (verze 1.2.6)
  * 
  * @author dezider.mesko
  * 
  */
 public class FioConstants {
 	/**
-	 * Mozne formaty vraceny serverm FIO tak jak jsou definovany v {@link http
-	 * ://www.fio.cz/docs/cz/API_Bankovnictvi.pdf} (verze 1.2.6)
+	 * Mozne formaty vraceny serverm FIO
 	 */
 	public enum AnswerFormat {
 		xml, json, ofx, gpc("Windows-1250"), csv, html, sta, pdf(true);
@@ -61,5 +61,25 @@ public class FioConstants {
 		public Boolean isBinary() {
 			return binary;
 		}
+	}
+
+	/**
+	 * Format prikazu k uhrade
+	 * 
+	 * @author dezider.mesko
+	 * 
+	 */
+	public enum OrderFormat {
+		xml, abo;
+	}
+
+	/**
+	 * Jazyky pouzite v odpovedi na platebni prikaz
+	 * 
+	 * @author dezider.mesko
+	 * 
+	 */
+	public enum Languages {
+		cs, sk, en;
 	}
 }
