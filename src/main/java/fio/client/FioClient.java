@@ -4,6 +4,9 @@ import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.HashMap;
 
+import fio.client.FioConstants.AnswerFormat;
+import fio.client.FioConstants.Languages;
+import fio.client.FioConstants.OrderFormat;
 import fio.client.https.BasicHttpsConnector;
 import fio.client.https.HttpsConnector;
 import fio.client.https.HttpsRequestException;
@@ -22,16 +25,17 @@ public class FioClient {
 	// set-last-date/{token}/{rrrr-mm-dd}/
 	private static final String SET_LAST_BY_DATE = "%sset-last-date/%s/%s/";
 	// import/
-	private static final String SEND_ORDER = "import/";
+	private static final String SEND_ORDER = "%s/import/";
 
 	private String token = "";
-	private FioConstants.AnswerFormat answerFormat = FioConstants.AnswerFormat.xml;
+	private AnswerFormat answerFormat = AnswerFormat.xml;
 	private String fioUrl = HTTPS_WWW_FIO_CZ;
 
 	SimpleDateFormat dateFormatter = new SimpleDateFormat("yyyy-MM-dd");
 	private HttpsConnector httpConnector;
+	private Languages answerLanguage = Languages.cs;
 
-	public FioClient(String token, FioConstants.AnswerFormat answerFormat) {
+	public FioClient(String token, AnswerFormat answerFormat) {
 		this.token = token;
 		this.answerFormat = answerFormat;
 		setHttpConnector(new BasicHttpsConnector());
@@ -39,7 +43,7 @@ public class FioClient {
 
 	public FioResult getTransactions(Calendar from, Calendar to) throws InvalidParametersException, HttpsRequestException {
 		if (from == null || to == null || from.after(to)) {
-			throw new InvalidParametersException();
+			throw new InvalidParametersException("From, To can't be null, and From can't be after To");
 		}
 
 		String url = String.format(GET_TRANSACTIONS, fioUrl, getToken(), dateFormatter.format(from.getTime()),
@@ -60,7 +64,7 @@ public class FioClient {
 
 	public FioResult setTransactionPointerByDate(Calendar date) throws HttpsRequestException, InvalidParametersException {
 		if (date == null) {
-			throw new InvalidParametersException();
+			throw new InvalidParametersException("Date can't be null");
 		}
 		String url = String
 				.format(SET_LAST_BY_DATE, fioUrl, getToken(), dateFormatter.format(date.getTime()), getAnswerFormat().toString());
@@ -93,11 +97,11 @@ public class FioClient {
 		this.fioUrl = url;
 	}
 
-	public FioConstants.AnswerFormat getAnswerFormat() {
+	public AnswerFormat getAnswerFormat() {
 		return answerFormat;
 	}
 
-	public void setAnswerFormat(FioConstants.AnswerFormat dataFormat) {
+	public void setAnswerFormat(AnswerFormat dataFormat) {
 		this.answerFormat = dataFormat;
 
 	}
@@ -115,17 +119,40 @@ public class FioClient {
 	 * @param format
 	 * @return
 	 * @throws HttpsRequestException
+	 * @throws InvalidParametersException
 	 */
-	public FioResult sendOrder(String order, FioConstants.AnswerFormat format) throws HttpsRequestException {
+	public FioResult sendOrder(String order, OrderFormat format) throws HttpsRequestException, InvalidParametersException {
+		if (order == null || format == null) {
+			throw new InvalidParametersException("Parameters can't be null");
+		}
 		HashMap<String, String> parameters = new HashMap<String, String>();
-		parameters.put("lng", "cs");
+		parameters.put("lng", answerLanguage.toString());
 		parameters.put("token", token);
-		parameters.put("type", format.name());
+		parameters.put("type", format.toString());
 		parameters.put("file", order);
 		parameters.put("filename", "SomeName");
 
-		byte[] response = httpConnector.getPostData(SEND_ORDER, parameters);
-		return new FioResult(response, FioConstants.AnswerFormat.xml, SEND_ORDER);
+		byte[] response = httpConnector.getPostData(String.format(SEND_ORDER, fioUrl), parameters);
+		return new FioResult(response, AnswerFormat.xml, String.format(SEND_ORDER, fioUrl));
+	}
+
+	/**
+	 * Vrati jazyk pouzity pro odpoved banky na platebni prikaz
+	 * 
+	 * @return
+	 */
+	public Languages getAnswerLanguage() {
+		return answerLanguage;
+	}
+
+	/**
+	 * Nastav jazyk popisku pri odpovedi banky. Pouziva se jenom pro odpovedi
+	 * platebnich prikazu
+	 * 
+	 * @param language
+	 */
+	public void setAnswerLanguage(Languages language) {
+		answerLanguage = language;
 	}
 
 }
